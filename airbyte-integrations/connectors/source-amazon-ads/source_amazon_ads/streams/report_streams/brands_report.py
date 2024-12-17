@@ -24,11 +24,75 @@ METRICS_MAP_V3 = {
         "newToBrandSalesPercentage14d",
         "newToBrandPurchasesPercentage14d",
         "newToBrandUnitsSoldPercentage14d",
+    ],
+    "keywords": [
+        "addToCart",
+        "addToCartClicks",
+        "addToCartRate",
+        "adGroupId",
+        "adGroupName",
+        "addToList",
+        "addToListFromClicks",
+        "qualifiedBorrows",
+        "qualifiedBorrowsFromClicks",
+        "royaltyQualifiedBorrows",
+        "royaltyQualifiedBorrowsFromClicks",
+        "brandedSearches",
+        "brandedSearchesClicks",
+        "campaignBudgetAmount",
+        "campaignBudgetCurrencyCode",
+        "campaignBudgetType",
+        "campaignId",
+        "campaignName",
+        "campaignStatus",
+        "clicks",
+        "cost",
+        "costType",
+        "detailPageViews",
+        "detailPageViewsClicks",
+        "eCPAddToCart",
+        "endDate",
+        "impressions",
+        "keywordBid",
+        "keywordId",
+        "adKeywordStatus",
+        "keywordText",
+        "keywordType",
+        "matchType",
+        "newToBrandDetailPageViewRate",
+        "newToBrandDetailPageViews",
+        "newToBrandDetailPageViewsClicks",
+        "newToBrandECPDetailPageView",
+        "newToBrandPurchases",
+        "newToBrandPurchasesClicks",
+        "newToBrandPurchasesPercentage",
+        "newToBrandPurchasesRate",
+        "newToBrandSales",
+        "newToBrandSalesClicks",
+        "newToBrandSalesPercentage",
+        "newToBrandUnitsSold",
+        "newToBrandUnitsSoldClicks",
+        "newToBrandUnitsSoldPercentage",
+        "purchases",
+        "purchasesClicks",
+        "purchasesPromoted",
+        "sales",
+        "salesClicks",
+        "salesPromoted",
+        "startDate",
+        "targetingExpression",
+        "targetingId",
+        "targetingText",
+        "targetingType",
+        "topOfSearchImpressionShare",
+        "unitsSold",
+
     ]
 }
 
 METRICS_TYPE_TO_ID_MAP_V3 = {
     "purchasedAsin": "purchasedAsin",
+    "keywords": "keywordId"
 }
 
 
@@ -49,6 +113,12 @@ class SponsoredBrandsV3ReportStream(SponsoredProductsReportStream):
 
         reportTypeId = "sbPurchasedProduct"
         group_by = ["purchasedAsin"]
+        filters = []
+
+        if record_type == "keywords":
+            group_by = ["targeting"]
+            reportTypeId = "sbTargeting"
+            filters = [{"field": "keywordType", "values": ["BROAD", "PHRASE", "EXACT"]}]
 
         body = {
             "name": f"{record_type} report {report_date}",
@@ -59,7 +129,7 @@ class SponsoredBrandsV3ReportStream(SponsoredProductsReportStream):
                 "groupBy": group_by,
                 "columns": metrics_list,
                 "reportTypeId": reportTypeId,
-                "filters": [],
+                "filters": filters,
                 "timeUnit": "SUMMARY",
                 "format": "GZIP_JSON",
             },
